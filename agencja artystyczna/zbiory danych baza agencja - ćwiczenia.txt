@@ -1,0 +1,93 @@
+1. Utwórz listę agentów i wykonawców zawierającą: nazwę (w przypadku agenta imię i nazwisko), adres, miasto, datę zatrudnienia (w przypadku wykonawców datę rejestracji), a także informację czy dana osoba jest agentem czy wykonawcą, posortowaną wg miast.
+
+SELECT 
+	concat(agenci.ImieAgenta, " ", agenci.NazwiskoAgenta) as nazwa, 
+    agenci.AdresAgenta,
+    agenci.MiastoAgenta,
+    agenci.DataZatrudnienia,
+    'agent'
+FROM agenci
+UNION ALL
+SELECT 
+	wykonawcy.NazwaScenicznaWykonawcy,
+    wykonawcy.AdresWykonawcy,
+    wykonawcy.MiastoWykonawcy,
+    wykonawcy.DataRejestracji,
+    'wykonawca'
+FROM wykonawcy  
+ORDER BY MiastoAgenta ASC
+
+2. Utwórz listę danych osobowych wszystkich osób znajdujących się w bazie. Lista powinna zawierać imię i nazwisko, oraz numer telefonu, a także informację czy dana osoba jest klientem, agentem czy członkiem zespołu, posortowaną wg klientów.
+
+SELECT 
+	agenci.ImieAgenta, 
+    agenci.NazwiskoAgenta,
+    agenci.TelefonAgenta,
+    'agent'
+FROM agenci
+UNION ALL
+SELECT 
+	klienci.ImieKlienta, 
+    klienci.NazwiskoKlienta,
+    klienci.TelefonKlienta,
+    'klient'
+FROM klienci
+UNION 
+SELECT 
+	czlonkowie.ImieCzlonka,
+    czlonkowie.NazwiskoCzlonka,
+    czlonkowie.TelefonCzlonka,
+    "czlonek"
+FROM czlonkowie;
+
+
+3. Utwórz listę osób lubiących FOLK oraz wykonawców tworzących muzykę w takim stylu, wraz z informacją czy rekord to osoba czy wykonawca, posortowaną wg wykonawców.
+
+SELECT 
+	concat(klienci.ImieKlienta, ' ', klienci.NazwiskoKlienta) as nazwa,
+    'klient' as kto
+FROM klienci
+INNER JOIN gusty_muzyczne
+	ON gusty_muzyczne.IDKlienta = klienci.IDKlienta
+    INNER JOIN style_muzyczne
+    	ON style_muzyczne.IDStylu = gusty_muzyczne.IDStylu
+WHERE style_muzyczne.NazwaStylu = 'folk'
+UNION 
+SELECT 
+	wykonawcy.NazwaScenicznaWykonawcy,
+    'wykonawca'
+FROM wykonawcy
+INNER JOIN style_wykonawcow
+	ON style_wykonawcow.IDWykonawcy = wykonawcy.IDWykonawcy
+    INNER JOIN style_muzyczne
+    	ON style_muzyczne.IDStylu = style_wykonawcow.IDStylu
+WHERE style_muzyczne.NazwaStylu = 'folk'  
+ORDER BY kto DESC;
+
+4. Wyświetl unikalne nazwy wykonawców, którzy brali udział w imprezach organizowanych dla klientów z id 10002 i 10003.
+
+SELECT DISTINCT wykonawcy.NazwaScenicznaWykonawcy FROM wykonawcy
+INNER JOIN imprezy
+	ON imprezy.IDWykonawcy = wykonawcy.IDWykonawcy
+    WHERE imprezy.IDKlienta = 10002 or 10003;
+
+5. Wyświetl listę klientów (imię i nazwisko), którzy lubią „muzykę z lat…”, a także ROCK and ROLL lub RAP.
+
+SELECT klienci.ImieKlienta, klienci.NazwiskoKlienta FROM klienci 
+INNER JOIN gusty_muzyczne 
+	ON gusty_muzyczne.IDKlienta = klienci.IDKlienta
+    INNER JOIN style_muzyczne
+    	ON style_muzyczne.IDStylu = gusty_muzyczne.IDStylu
+        WHERE style_muzyczne.NazwaStylu LIKE 'Muzyka lat%' 
+        or style_muzyczne.NazwaStylu IN ('rock','Rap','ROCK and ROLL');
+
+6. Wyświetl unikalne nazwy wykonawców, którzy brali udział w imprezach organizowanych dla klienta z id 10005, ale nie brali udziału w imprezach organizowanych przez klienta z id 10008.
+
+SELECT DISTINCT wykonawcy.NazwaScenicznaWykonawcy FROM wykonawcy
+INNER JOIN imprezy
+	ON imprezy.IDWykonawcy = wykonawcy.IDWykonawcy
+    WHERE imprezy.IDKlienta = 10005  AND imprezy.IDKlienta != 10008;
+
+7. Wyświetl listę agentów (imię i nazwisko), którzy organizowali imprezy o id 5, 10, 13, a jednocześnie nie organizowali imprez o id 15, 17, 19.
+
+
