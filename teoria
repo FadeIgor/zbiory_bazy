@@ -2,3 +2,34 @@ Zbior a
 zbior b
 
 union - z oby 2 zbiorow
+
+SELECT klienci.miasto_klienta FROM klienci
+UNION
+SELECT pracownicy.miasto_pracownika FROM pracownicy;
+
+roznica miexdzy union a union all jest taka ze union pozbywa sie duplikatow
+
+SELECT * FROM klienci
+UNION 
+SELECT * FROM pracownicy;
+ilsoc kolumn musi byc taka sama
+
+SELECT concat(klienci.ImieKlienta, ' ',klienci.NazwiskoKlienta)
+FROM klienci
+UNION 
+SELECT dostawcy.NazwaDostawcy FROM dostawcy;
+
+Trzeba korzystac z tego samego typu danych
+
+nazwy kolumn sa takie jak w 1 selectcie
+
+intersect - czesc wspolna,  nie wyswietla sie w 
+
+SELECT  klienci.MiastoKlienta FROM klienci
+intersect
+SELECT pracownicy.MiastoPracownika FROM pracownicy;
+
+except - przeciwienstwo intersect - wyswietla tylko to co jest w 1 a nie ma w 2 (odejmowanie)
+klienci.MiastoKlienta FROM klienci
+except
+SELECT pracownicy.MiastoPracownika FROM pracownicy;
